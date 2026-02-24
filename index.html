@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Construye tu Negocio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fuente: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg1:#1e3c72; --bg2:#2a5298; --ink:#0a2342; --pri:#00c6ff;
+      --ok:#27ae60; --bad:#c0392b; --card:#ffffff; --muted:#6c7a89;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:'Poppins',sans-serif; margin:0; color:#fff;
+      background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+      min-height:100svh;
+    }
+    header{
+      position:relative; overflow:hidden;
+      background:linear-gradient(180deg,rgba(10,35,66,.95),rgba(10,35,66,.7)),
+                 url('https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+      border-bottom:5px solid var(--pri); text-align:center; padding:48px 16px 56px;
+    }
+    header h1{margin:0;color:#fff;font-size: clamp(28px, 4vw, 40px); letter-spacing:.3px}
+    header p{margin:10px 0 0;color:#eaf6ff; font-size: clamp(14px, 2.4vw, 18px)}
+
+    .wrapper{max-width:1000px;margin: -30px auto 60px;padding:0 16px}
+    section.card{
+      background:var(--card); color:#333; margin:20px 0; padding:20px 20px 14px;
+      border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.18);
+      transition:transform .18s ease, box-shadow .18s ease; border:1px solid #eef2f7;
+    }
+    section.card:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.22)}
+    .card-header{ display:flex; align-items:center; gap:12px; margin-bottom:12px }
+    .card-header img{ width:36px; height:36px; object-fit:contain }
+    h2{
+      color:var(--ink); margin:0; padding-bottom:6px; font-size:20px;
+      border-bottom:3px solid var(--pri); flex:1
+    }
+    label{display:block;margin:12px 0 8px;font-weight:600;color:#1f2d3d}
+    input{
+      padding:12px 12px; border:2px solid #d9ecff; border-radius:10px; width:100%;
+      transition:border-color .2s, box-shadow .2s; background:#fff
+    }
+    input:focus{border-color:var(--ink); outline:none; box-shadow:0 0 0 4px rgba(0,198,255,.15)}
+    .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:720px){ .grid-2{grid-template-columns:1fr} }
+
+    table{width:100%; border-collapse:separate; border-spacing:0 10px; margin-top:10px}
+    thead th{
+      background:linear-gradient(180deg, var(--pri), #00a8e8);
+      color:#fff; padding:10px; font-size:14px; text-align:center; border-radius:10px
+    }
+    tbody tr{background:#f9fcff}
+    tbody td{
+      padding:8px; vertical-align:middle;
+      border-top:1px solid #e6f2ff; border-bottom:1px solid #e6f2ff
+    }
+    tbody tr td:first-child{border-left:1px solid #e6f2ff; border-radius:10px 0 0 10px}
+    tbody tr td:last-child{border-right:1px solid #e6f2ff; border-radius:0 10px 10px 0}
+
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:12px 18px; margin:10px 6px 4px; cursor:pointer;
+      background:var(--pri); color:#fff; border:none; border-radius:10px; font-weight:700;
+      transition:transform .12s ease, box-shadow .18s ease, background .18s ease
+    }
+    .btn:hover{transform:translateY(-1px); background:#0a7fb1; box-shadow:0 8px 18px rgba(0,198,255,.35)}
+    .btn.secondary{background:#efefef;color:#1e2a36}
+    .btn.secondary:hover{background:#e6e6e6}
+    .btn.danger{background:#ff6b6b}
+    .btn.danger:hover{background:#e85454}
+    .btn.success{background:#22c55e}
+    .btn.success:hover{background:#16a34a}
+
+    .row-actions{ display:flex; gap:6px; justify-content:center }
+    #resultado{ font-size:20px; margin-top:12px; text-align:center; font-weight:700 }
+    .positivo{color:var(--ok)} .negativo{color:var(--bad)}
+
+    .meter{
+      height:14px; background:#f0f4f8; border-radius:999px; overflow:hidden; margin:10px 0 4px
+    }
+    .meter > span{ display:block; height:100%; width:0%; transition:width .4s ease;
+      background:linear-gradient(90deg, #22c55e, #16a34a) }
+    .meter.negative > span{ background:linear-gradient(90deg, #f97316, #ef4444) }
+
+    .footer-note{color:#d9eeff; text-align:center; margin:24px 0 40px; font-size:13px}
+    .muted{color:#6c7a89; font-weight:500}
+    .hint{font-size:12px; color:#6a7b92; margin-top:6px}
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px;
+      background:#e6f9ff; color:#085f7a; font-weight:600; font-size:13px }
+    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end }
+
+    /* Histórico */
+    .historico-actions{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 6px }
+    #historicoTexto{
+      width:100%; min-height:140px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border:1px dashed #cfe8ff; padding:10px; border-radius:8px; background:#f6fbff
+    }
+    .mini-table{ width:100%; border-collapse:collapse; margin:8px 0 }
+    .mini-table th, .mini-table td{ border:1px solid #e3eefc; padding:6px 8px; font-size:13px }
+    .mini-table th{ background:#eef7ff; text-align:left }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Construye tu Negocio</h1>
+    <p>Llena tu plan de negocio y descubre tu utilidad</p>
+  </header>
+
+  <div class="wrapper">
+    <!-- Identidad -->
+    <section class="card" id="identidad">
+      <div class="card-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/992/992700.png" alt="Identidad" />
+        <h2>Identidad del negocio</h2>
+        <span class="pill">🧭 Completa tu base</span>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>Nombre del negocio</label>
+          <input type="text" id="nombre" placeholder="Ej. Café Aurora" />
+        </div>
+        <div>
+          <label>Mes y año</label>
+          <input type="month" id="fecha" />
+        </div>
+      </div>
+
+      <label>¿Qué ofrecería?</label>
+      <input type="text" id="oferta" placeholder="Ej. Bebidas artesanales y postres" />
+
+      <div class="grid-2">
+        <div>
+          <label>Misión</label>
+          <input type="text" id="mision" placeholder="¿Cuál es tu propósito?" />
+        </div>
+        <div>
+          <label>Visión</label>
+          <input type="text" id="vision" placeholder="¿Hacia dónde vas?" />
+        </div>
+      </div>
+      <p class="hint">💡 Consejo: Sé específico y orientado al cliente. Esto guía decisiones y costos.</p>
+    </section>
+
+    <!-- Ingresos -->
+    <section class="card">
+      <div class="card-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/1170/1170575.png" alt="Ingresos" />
+        <h2>Ingresos</h2>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn" onclick="agregarFila('tablaIngresos')">➕ Agregar ingreso</button>
+        <button class="btn secondary" onclick="cargarEjemplo('tablaIngresos')">📥 Cargar ejemplo</button>
+        <button class="btn danger" onclick="limpiarTabla('tablaIngresos')">🗑 Limpiar</button>
+      </div>
+
+      <table id="tablaIngresos" aria-label="Tabla de ingresos">
+        <thead>
+          <tr><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="hint">✨ Tip: Describe productos o servicios y registra montos netos cobrados.</p>
+    </section>
+
+    <!-- Gastos -->
+    <section class="card">
+      <div class="card-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Gastos" />
+        <h2>Gastos</h2>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn" onclick="agregarFila('tablaGastos')">➕ Agregar gasto</button>
+        <button class="btn secondary" onclick="cargarEjemplo('tablaGastos')">📥 Cargar ejemplo</button>
+        <button class="btn danger" onclick="limpiarTabla('tablaGastos')">🗑 Limpiar</button>
+      </div>
+
+      <table id="tablaGastos" aria-label="Tabla de gastos">
+        <thead>
+          <tr><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="hint">🔎 Tip: Incluye costos fijos (renta, sueldos) y variables (insumos, comisiones).</p>
+    </section>
+
+    <!-- Resultado -->
+    <section class="card">
+      <div class="card-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/3500/3500833.png" alt="Resultado" />
+        <h2>Resultado Final</h2>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn" onclick="calcular()">📊 Calcular utilidad</button>
+        <button class="btn secondary" onclick="guardar()">💾 Guardar</button>
+        <button class="btn secondary" onclick="recuperar()">🔄 Recuperar</button>
+        <button class="btn danger" onclick="reiniciarTodo()">♻️ Reiniciar todo</button>
+        <!-- Histórico para copiar/descargar CSV -->
+        <button class="btn" onclick="mostrarHistorico()">📚 Mostrar/Actualizar histórico</button>
+      </div>
+
+      <div class="meter" id="barra"><span></span></div>
+      <p id="resultado"></p>
+      <p class="muted" id="resumen"></p>
+    </section>
+
+    <!-- HISTÓRICO (para copiar / descargar) -->
+    <section class="card" id="historicoSection" style="display:none;">
+      <div class="card-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/2920/2920223.png" alt="Histórico" />
+        <h2>Histórico para copiar / descargar</h2>
+      </div>
+
+      <div id="historicoTablas"></div>
+
+      <div class="historico-actions">
+        <button class="btn secondary" onclick="copiarCSV()">📋 Copiar CSV</button>
+        <button class="btn success" onclick="descargarCSV()">⬇️ Descargar CSV</button>
+      </div>
+      <label>CSV (para pegar en Excel, Google Sheets, etc.)</label>
+      <textarea id="historicoTexto" readonly></textarea>
+      <p class="hint">Consejo: Copia todo el bloque (Ctrl/Cmd + A, luego Ctrl/Cmd + C) y pégalo en tu hoja de cálculo.</p>
+    </section>
+
+    <p class="footer-note">Hecho con 💙 para impulsar ideas. Tus datos se guardan localmente en tu navegador.</p>
+  </div>
+
+  <script>
+    // ============== Utilidades ==============
+    const fmt = new Intl.NumberFormat('es-MX', { style:'currency', currency:'MXN' });
+
+    function crearInputFecha() {
+      const i = document.createElement('input');
+      i.type = 'date'; i.required = true;
+      return i;
+    }
+    function crearInputTexto(ph) {
+      const i = document.createElement('input');
+      i.type = 'text'; i.placeholder = ph || 'Descripción'; i.maxLength = 80;
+      return i;
+    }
+    function crearInputMonto() {
+      const i = document.createElement('input');
+      i.type = 'text'; i.inputMode = 'decimal'; i.placeholder = '0.00';
+      i.addEventListener('blur', () => formatearMoneda(i));
+      i.addEventListener('focus', () => desformatearMoneda(i));
+      return i;
+    }
+    function formatearMoneda(input){
+      const n = parseFloat(input.value.toString().replace(/[^0-9.-]/g,'')) || 0;
+      input.value = fmt.format(n);
+    }
+    function desformatearMoneda(input){
+      const n = parseFloat(input.value.toString().replace(/[^0-9.-]/g,'')) || '';
+      input.value = n;
+    }
+
+    function agregarFila(idTabla){
+      const tbody = document.querySelector(`#${idTabla} tbody`);
+      const tr = document.createElement('tr');
+
+      const tdFecha = document.createElement('td'); tdFecha.appendChild(crearInputFecha());
+      const tdDesc  = document.createElement('td'); tdDesc.appendChild(crearInputTexto('Descripción'));
+      const tdMonto = document.createElement('td'); tdMonto.appendChild(crearInputMonto());
+      const tdAcc   = document.createElement('td');
+      tdAcc.className = 'row-actions';
+      const btnDel = document.createElement('button');
+      btnDel.className = 'btn danger'; btnDel.type='button';
+      btnDel.textContent = 'Eliminar';
+      btnDel.onclick = () => { tr.remove(); actualizarResumen(); };
+      tdAcc.appendChild(btnDel);
+
+      tr.append(tdFecha, tdDesc, tdMonto, tdAcc);
+      tbody.appendChild(tr);
+    }
+
+    function limpiarTabla(idTabla){
+      document.querySelector(`#${idTabla} tbody`).innerHTML = '';
+      actualizarResumen();
+    }
+
+    function cargarEjemplo(idTabla){
+      const ejemplos = {
+        tablaIngresos: [
+          {f: '2026-02-01', d:'Venta café americano', m:1200},
+          {f: '2026-02-03', d:'Venta capuchino', m:950}
+        ],
+        tablaGastos: [
+          {f: '2026-02-02', d:'Compra de granos', m:600},
+          {f: '2026-02-04', d:'Servicios (agua/luz)', m:350}
+        ]
+      };
+      limpiarTabla(idTabla);
+      ejemplos[idTabla].forEach(e=>{
+        agregarFila(idTabla);
+        const tr = document.querySelectorAll(`#${idTabla} tbody tr`);
+        const row = tr[tr.length-1];
+        row.cells[0].querySelector('input').value = e.f;
+        row.cells[1].querySelector('input').value = e.d;
+        const montoInput = row.cells[2].querySelector('input');
+        montoInput.value = e.m;
+        formatearMoneda(montoInput);
+      });
+      actualizarResumen();
+    }
+
+    function sumar(idTabla){
+      const rows = document.querySelectorAll(`#${idTabla} tbody tr`);
+      let total = 0;
+      rows.forEach(r=>{
+        const raw = r.cells[2].querySelector('input').value;
+        const n = parseFloat(raw.toString().replace(/[^0-9.-]/g,'')) || 0;
+        total += n;
+      });
+      return total;
+    }
+
+    function calcular(){
+      const ingresos = sumar('tablaIngresos');
+      const gastos   = sumar('tablaGastos');
+      const utilidad = ingresos - gastos;
+
+      const barra = document.getElementById('barra');
+      const barInner = barra.querySelector('span');
+      const resultado = document.getElementById('resultado');
+      const resumen = document.getElementById('resumen');
+
+      const ratio = Math.min(Math.abs(utilidad) / (ingresos + gastos || 1), 1);
+      barInner.style.width = (ratio*100).toFixed(0) + '%';
+      barra.classList.toggle('negative', utilidad < 0);
+
+      if(utilidad >= 0){
+        resultado.innerHTML = `🏆 Utilidad: <span class="positivo">${fmt.format(utilidad)}</span> 🚀 ¡Tu negocio está creciendo!`;
+      } else {
+        resultado.innerHTML = `🏆 Utilidad: <span class="negativo">${fmt.format(utilidad)}</span> ⚠️ Revisa tus gastos.`;
+      }
+      resumen.textContent = `💰 Ingresos: ${fmt.format(ingresos)}   •   📉 Gastos: ${fmt.format(gastos)}`;
+
+      if(utilidad > 0) lanzarConfeti();
+      guardarAuto();
+    }
+
+    function actualizarResumen(){
+      const resultado = document.getElementById('resultado');
+      const resumen = document.getElementById('resumen');
+      const barra = document.getElementById('barra');
+      barra.querySelector('span').style.width = '0%';
+      barra.classList.remove('negative');
+      resultado.textContent = '';
+      const ingresos = sumar('tablaIngresos');
+      const gastos   = sumar('tablaGastos');
+      if(ingresos || gastos){
+        resumen.textContent = `💰 Ingresos: ${fmt.format(ingresos)}   •   📉 Gastos: ${fmt.format(gastos)}`;
+      } else {
+        resumen.textContent = '';
+      }
+      guardarAuto();
+    }
+
+    // ============== Guardado local ==============
+    function snapshot(){
+      const pickRows = (id) => {
+        const rows = [];
+        document.querySelectorAll(`#${id} tbody tr`).forEach(r=>{
+          rows.push({
+            f: r.cells[0].querySelector('input').value || '',
+            d: r.cells[1].querySelector('input').value || '',
+            m: (r.cells[2].querySelector('input').value || '').toString().replace(/[^0-9.-]/g,'')
+          });
+        });
+        return rows;
+      };
+      return {
+        nombre: document.getElementById('nombre').value || '',
+        fecha: document.getElementById('fecha').value || '',
+        oferta: document.getElementById('oferta').value || '',
+        mision: document.getElementById('mision').value || '',
+        vision: document.getElementById('vision').value || '',
+        ingresos: pickRows('tablaIngresos'),
+        gastos: pickRows('tablaGastos')
+      };
+    }
+
+    function fromSnapshot(data){
+      document.getElementById('nombre').value = data.nombre || '';
+      document.getElementById('fecha').value = data.fecha || '';
+      document.getElementById('oferta').value = data.oferta || '';
+      document.getElementById('mision').value = data.mision || '';
+      document.getElementById('vision').value = data.vision || '';
+
+      ['tablaIngresos','tablaGastos'].forEach(id=>{
+        limpiarTabla(id);
+        (data[id === 'tablaIngresos' ? 'ingresos' : 'gastos'] || []).forEach(r=>{
+          agregarFila(id);
+          const tr = document.querySelectorAll(`#${id} tbody tr`);
+          const row = tr[tr.length-1];
+          row.cells[0].querySelector('input').value = r.f || '';
+          row.cells[1].querySelector('input').value = r.d || '';
+          const monto = row.cells[2].querySelector('input');
+          monto.value = r.m || '';
+          formatearMoneda(monto);
+        });
+      });
+      actualizarResumen();
+    }
+
+    function guardar(){
+      localStorage.setItem('negocio:plan', JSON.stringify(snapshot()));
+      alert('✅ Progreso guardado en este navegador.');
+    }
+    function recuperar(){
+      const raw = localStorage.getItem('negocio:plan');
+      if(!raw){ alert('No hay datos guardados.'); return; }
+      fromSnapshot(JSON.parse(raw));
+      alert('🔄 Datos recuperados.');
+    }
+    function guardarAuto(){
+      localStorage.setItem('negocio:plan', JSON.stringify(snapshot()));
+    }
+    function reiniciarTodo(){
+      if(confirm('Esto borrará todo lo capturado. ¿Continuar?')){
+        localStorage.removeItem('negocio:plan');
+        document.getElementById('nombre').value='';
+        document.getElementById('fecha').value='';
+        document.getElementById('oferta').value='';
+        document.getElementById('mision').value='';
+        document.getElementById('vision').value='';
+        limpiarTabla('tablaIngresos'); limpiarTabla('tablaGastos');
+        document.getElementById('resultado').textContent='';
+        document.getElementById('resumen').textContent='';
+        document.getElementById('barra').querySelector('span').style.width='0%';
+        document.getElementById('barra').classList.remove('negative');
+        document.getElementById('historicoSection').style.display='none';
+      }
+    }
+
+    // ============== HISTÓRICO (sin librerías externas) ==============
+    function mostrarHistorico(){
+      const data = snapshot();
+      const sec = document.getElementById('historicoSection');
+      const cont = document.getElementById('historicoTablas');
+      const txt = document.getElementById('historicoTexto');
+
+      // Totales
+      const ingresosTotal = (data.ingresos||[]).reduce((a,b)=>a+Number(b.m||0),0);
+      const gastosTotal   = (data.gastos||[]).reduce((a,b)=>a+Number(b.m||0),0);
+      const utilidad      = ingresosTotal - gastosTotal;
+
+      // Tablas HTML
+      const tablaHTML = `
+        <h3 class="muted">Identidad</h3>
+        <table class="mini-table">
+          <tr><th>Nombre del negocio</th><td>${escapeHTML(data.nombre||'')}</td></tr>
+          <tr><th>Mes y año</th><td>${escapeHTML(data.fecha||'')}</td></tr>
+          <tr><th>Oferta</th><td>${escapeHTML(data.oferta||'')}</td></tr>
+          <tr><th>Misión</th><td>${escapeHTML(data.mision||'')}</td></tr>
+          <tr><th>Visión</th><td>${escapeHTML(data.vision||'')}</td></tr>
+        </table>
+
+        <h3 class="muted">Ingresos</h3>
+        <table class="mini-table">
+          <thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead>
+          <tbody>
+            ${(data.ingresos||[]).map(r=>`
+              <tr>
+                <td>${escapeHTML(r.f||'')}</td>
+                <td>${escapeHTML(r.d||'')}</td>
+                <td style="text-align:right">${fmt.format(Number(r.m||0))}</td>
+              </tr>
+            `).join('')}
+            <tr>
+              <th colspan="2" style="text-align:right">Total ingresos</th>
+              <th style="text-align:right">${fmt.format(ingresosTotal)}</th>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="muted">Gastos</h3>
+        <table class="mini-table">
+          <thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead>
+          <tbody>
+            ${(data.gastos||[]).map(r=>`
+              <tr>
+                <td>${escapeHTML(r.f||'')}</td>
+                <td>${escapeHTML(r.d||'')}</td>
+                <td style="text-align:right">${fmt.format(Number(r.m||0))}</td>
+              </tr>
+            `).join('')}
+            <tr>
+              <th colspan="2" style="text-align:right">Total gastos</th>
+              <th style="text-align:right">${fmt.format(gastosTotal)}</th>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="muted">Resumen</h3>
+        <table class="mini-table">
+          <tr><th>Ingresos totales</th><td style="text-align:right">${fmt.format(ingresosTotal)}</td></tr>
+          <tr><th>Gastos totales</th><td style="text-align:right">${fmt.format(gastosTotal)}</td></tr>
+          <tr><th>Utilidad</th><td style="text-align:right; color:${utilidad>=0?'#27ae60':'#c0392b'}">${fmt.format(utilidad)}</td></tr>
+        </table>
+      `;
+      cont.innerHTML = tablaHTML;
+
+      // CSV (con separador coma; escapamos comillas; EOL \n)
+      const csvLine = arr => arr.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',');
+      const ingresosCSV = [
+        'Ingresos',
+        'Fecha,Descripción,Monto',
+        ...(data.ingresos||[]).map(r => csvLine([r.f||'', r.d||'', Number(r.m||0)])),
+        csvLine(['Total ingresos','',''+ingresosTotal]),
+        ''
+      ].join('\n');
+
+      const gastosCSV = [
+        'Gastos',
+        'Fecha,Descripción,Monto',
+        ...(data.gastos||[]).map(r => csvLine([r.f||'', r.d||'', Number(r.m||0)])),
+        csvLine(['Total gastos','',''+gastosTotal]),
+        ''
+      ].join('\n');
+
+      const resumenCSV = [
+        'Resumen',
+        csvLine(['Ingresos totales', ingresosTotal]),
+        csvLine(['Gastos totales', gastosTotal]),
+        csvLine(['Utilidad', utilidad]),
+        ''
+      ].join('\n');
+
+      const identidadCSV = [
+        'Identidad',
+        csvLine(['Nombre del negocio', data.nombre||'']),
+        csvLine(['Mes y año', data.fecha||'']),
+        csvLine(['Oferta', data.oferta||'']),
+        csvLine(['Misión', data.mision||'']),
+        csvLine(['Visión', data.vision||'']),
+        ''
+      ].join('\n');
+
+      const fullCSV = [identidadCSV, ingresosCSV, gastosCSV, resumenCSV].join('\n');
+      txt.value = fullCSV;
+
+      sec.style.display = 'block';
+      window.scrollTo({ top: sec.offsetTop - 10, behavior: 'smooth' });
+    }
+
+    function copiarCSV(){
+      const ta = document.getElementById('historicoTexto');
+      ta.select(); ta.setSelectionRange(0, ta.value.length);
+      const ok = document.execCommand('copy');
+      if(!ok && navigator.clipboard){ navigator.clipboard.writeText(ta.value); }
+      alert('📋 CSV copiado al portapapeles.');
+    }
+
+    function descargarCSV(){
+      const data = document.getElementById('historicoTexto').value || '';
+      const blob = new Blob([data], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const nombre = (document.getElementById('nombre').value || 'PlanNegocio').replace(/\s+/g,'_');
+      a.download = `${nombre}_historico.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // ============== Confeti ==============
+    function lanzarConfeti(){
+      const colors = ['#22c55e','#16a34a','#00c6ff','#38bdf8','#facc15'];
+      for(let i=0;i<16;i++){
+        const p = document.createElement('div');
+        p.style.position='fixed';
+        p.style.left = (Math.random()*100).toFixed(2)+'vw';
+        p.style.top='-10px';
+        p.style.width='8px'; p.style.height='14px';
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.opacity='0.9';
+        p.style.transform=`rotate(${Math.random()*360}deg)`;
+        p.style.borderRadius='2px';
+        p.style.zIndex='9999';
+        document.body.appendChild(p);
+        const duration = 1200 + Math.random()*800;
+        p.animate([{transform:p.style.transform, top:'-10px'},{transform:'rotate(720deg)', top:'100vh'}],
+                  {duration, easing:'ease-in'});
+        setTimeout(()=>p.remove(), duration+50);
+      }
+    }
+
+    // Restaurar si hay algo guardado
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const raw = localStorage.getItem('negocio:plan');
+      if(raw){ fromSnapshot(JSON.parse(raw)); }
+    });
+  </script>
+</body>
+</html>
